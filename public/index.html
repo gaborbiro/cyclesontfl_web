@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style media="screen">
+    body {
+      background: #ECEFF1;
+      color: rgba(0, 0, 0, 0.87);
+      font-family: Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    #message {
+      background: white;
+      max-width: 480px;
+      margin: 100px auto 16px;
+      padding: 32px 24px;
+      border-radius: 3px;
+    }
+
+    #message h2 {
+      color: #ffa100;
+      font-weight: bold;
+      font-size: 16px;
+      margin: 0 0 8px;
+    }
+
+    #message p {
+      line-height: 140%;
+      margin: 16px 0 24px;
+      font-size: 14px;
+    }
+
+    #note {
+      color: rgba(0, 0, 0, 0.4);
+      text-align: left;
+      font-size: 13px;
+    }
+
+    table, th, td {
+      border: 1px solid rgb(218, 218, 218);
+      border-collapse: collapse;
+      border-style: inset;
+    }
+    th, td {
+      padding: 4px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="message">
+    <h2>Where are cycles allowed on London public transport right now</h2>
+    <p id="datetime"></p>
+    <table id="rules">
+      
+    </table>
+    <p id="note">Source: <a href="https://tfl.gov.uk/modes/cycling/cycles-on-public-transport">https://tfl.gov.uk/modes/cycling/cycles-on-public-transport</a><br />Leave a feedback: <a href='mailto:droidique@gmail.com'>droidique@gmail.com</a></p>
+  </div>
+
+  <script>
+    const Bakerloo = "Bakerloo";
+    const Central = "Central";
+    const Circle = "Circle";
+    const District = "District";
+    const DLR = "DLR";
+    const Elizabeth = "Elizabeth";
+    const HammersmithCity = "Hammersmith & City";
+    const Jubilee = "Jubilee";
+    const Metropolitan = "Metropolitan";
+    const Northern = "Northern";
+    const Overground = "Overground";
+    const Piccadilly = "Piccadilly";
+    const Victoria = "Victoria";
+    const WaterlooCity = "Waterloo & City";
+
+    const Allowed = "Allowed anywhere";
+    const NotAllowed = "Not allowed";
+
+    const lineColors = new Map([
+      [Bakerloo, "#B36305"],
+      [Central, "#E32017"],
+      [Circle, "#FFD300"],
+      [District, "#00782A"],
+      [DLR, "#00A4A7"],
+      [Elizabeth, "#9364CD"],
+      [HammersmithCity, "#F3A9BB"],
+      [Jubilee, "#A0A5A9"],
+      [Metropolitan, "#9B0056"],
+      [Northern, "#000000"],
+      [Overground, "#EE7C0E"],
+      [Piccadilly, "#003688"],
+      [Victoria, "#0098D4"],
+      [WaterlooCity, "#95CDBA"],
+    ]);
+
+    const mondayFriday = "Monday - Friday";
+    const weekendOrHolidays = "Weekend or Bank Holidays";
+
+    const pastMidnight_0000_0730 = "00:00-07:30";
+    const morningPeak_0730_0930 = "07:30-09:30";
+    const daytime_0930_1600 = "09:30-16:00";
+    const eveningPeak_1600_1900 = "16:00-19:00";
+    const nighttime_1900_2400 = "19:00-00:00";
+
+    const allowedRuleSet = new Map([
+      [Bakerloo, "Between Queen's Park and Harrow & Wealdstone"],
+      [Central, "Between Leyton, Epping and Newbury Park (via Hainault only)\nBetween, White City, Ealing Broadway and West Ruislip"],
+      [Circle, Allowed],
+      [District, Allowed],
+      [DLR, Allowed],
+      [Elizabeth, Allowed],
+      [HammersmithCity, Allowed],
+      [Jubilee, "Between Stratford and Canning Town\nBetween, Finchley Road and Stanmore"],
+      [Metropolitan, Allowed],
+      [Northern, "Between Golders Green and Hendon Central\nBetween Colindale and Edgware\nBetween East Finchley, Mill Hill East and High Barnet"],
+      [Piccadilly, "Between Oakwood and Cockfosters\nBetween Barons Court, Hounslow West and Uxbridge"],
+      [Overground, Allowed],
+      [Victoria, NotAllowed],
+      [WaterlooCity, NotAllowed],
+    ]);
+
+    const notAllowedRuleSet = new Map([
+      [Bakerloo, NotAllowed],
+      [Central, NotAllowed],
+      [Circle, NotAllowed],
+      [District, NotAllowed],
+      [DLR, NotAllowed],
+      [Elizabeth, "From west: until Royal Oak\nTo west: from Paddington\nFrom east: until Bethnal Green\nTo east: from Liverpool Street\nNote: until the Elizabeth Line fully opens (Sprin 2023), the times are actually slightly different"],
+      [HammersmithCity, NotAllowed],
+      [Jubilee, NotAllowed],
+      [Metropolitan, Allowed],
+      [Northern, NotAllowed],
+      [Piccadilly, NotAllowed],
+      [Overground, "From Liverpool Street station going towards Chingford, Enfield Town or Cheshunt.\nComing from Chingford, Enfield Town or Cheshunt until Bethnal Green."],
+      [Victoria, NotAllowed],
+      [WaterlooCity, NotAllowed],
+    ]);
+
+    const weekdayRuleSet = new Map([
+      [pastMidnight_0000_0730, allowedRuleSet],
+      [morningPeak_0730_0930, notAllowedRuleSet],
+      [daytime_0930_1600, allowedRuleSet],
+      [eveningPeak_1600_1900, notAllowedRuleSet],
+      [nighttime_1900_2400, allowedRuleSet],
+    ]);
+
+    const weekendOrHolidaysRuleSet = new Map([
+      [pastMidnight_0000_0730, allowedRuleSet],
+      [morningPeak_0730_0930, allowedRuleSet],
+      [daytime_0930_1600, allowedRuleSet],
+      [eveningPeak_1600_1900, allowedRuleSet],
+      [nighttime_1900_2400, allowedRuleSet],
+    ]);
+
+    const ruleSet = new Map([
+      [mondayFriday, weekdayRuleSet],
+      [weekendOrHolidays, weekendOrHolidaysRuleSet],
+    ]);
+
+
+    const now = new Date();
+    const hour = now.getHours();
+    const minute = now.getMinutes();
+    const time = hour * 60 + minute;
+
+    let selectedTimeOfDay;
+
+    switch (true) {
+      case time < 450: // past midnight
+        selectedTimeOfDay = pastMidnight_0000_0730;
+        break;
+      case time < 570: // morning peak
+        selectedTimeOfDay = morningPeak_0730_0930;
+        break;
+      case time < 960: // daytime
+        selectedTimeOfDay = daytime_0930_1600;
+        break;
+      case time < 1140: // evening peak
+        selectedTimeOfDay = eveningPeak_1600_1900;
+        break;
+      case time < 1440: // nighttime
+        selectedTimeOfDay = nighttime_1900_2400;
+        break;
+    }
+
+    let selectedRuleSet;
+
+    if (now.getDay() > 0 && now.getDay() < 6) {
+      selectedRuleSet = weekdayRuleSet.get(selectedTimeOfDay);
+    } else {
+      selectedRuleSet = weekendOrHolidaysRuleSet.get(selectedTimeOfDay);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const dateTimeElement = document.querySelector('#datetime');
+      const options = { 
+        timeZone: 'Europe/London', 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric', 
+        timeZoneName: 'short'
+      };
+      const formattedDateTime = now.toLocaleDateString('en-GB', options);
+      dateTimeElement.textContent = `Today is ${formattedDateTime}`;
+
+      const tableElement = document.querySelector('#rules');
+      selectedRuleSet.forEach((value, line) => {
+        var row = tableElement.insertRow(tableElement.rows.length);
+        var cellLine = row.insertCell(0);
+        cellLine.innerHTML = line;
+        cellLine.style.color = 'white';
+        cellLine.style.backgroundColor = lineColors.get(line);
+        var cellRule = row.insertCell(1);
+        cellRule.innerHTML = value.replace("\n", "<br />");
+      });
+    });
+  </script>
+</body>
+
+</html>
