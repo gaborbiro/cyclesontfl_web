@@ -15,7 +15,7 @@ body {
 }
 
 #message h2 {
-    color: #ffa100;
+    color: black;
     font-weight: bold;
     font-size: 16px;
     margin: 0 0 8px;
@@ -57,7 +57,6 @@ th,
 td {
     border: 1px solid rgb(218, 218, 218);
     border-collapse: collapse;
-    border-style: inset;
     font-size: 13px;
 }
 
@@ -87,8 +86,24 @@ input {
     #message h2 {
         text-align: center;
     }
+}
 
-    #date-picker-container {
-        text-align: center;
-    }
+.button {
+    border: none;
+    padding: 8px 16px;
+    text-align: center;
+    vertical-align: bottom;
+    min-height: 28px;
+    font-size: 12px;
+    color: blue;
+    transition-duration: 1.4s;
+    cursor: pointer;
+}
+
+.button1 {
+    background-color: white;
+}
+
+.button1:active {
+    background-color: rgb(184, 184, 184);
 }

@@ -23,7 +23,6 @@ const AllowedFolded = "You can take folded cycles anywhere, at any time on all t
 const AllowedAnywhere = "Allowed anywhere";
 const NotAllowed = "Not allowed";
 const NotAllowedEver = "Never allowed";
-const NotAllowedBusesTrams = "Cycles cannot be taken on buses and trams";
 const AllowedNationalRail = "Use <a target='_blank' href='http://plusbike.nationalrail.co.uk/'>PlusBike</a> to find out where you can take cycles on National Rail services.";
 const AllowedRiver = "Most <a target='_blank' href='https://tfl.gov.uk/modes/river/'>river services</a> allow non-folded cycles but you should check with them before you travel.";
 const AllowedEmiratesAir = "You can take a non-folded cycle at any time.";
@@ -67,49 +66,49 @@ const eveningPeak_1600_1900 = "16:00-19:00";
 const nighttime_1900_2400 = "19:00-00:00";
 
 const allowedSet = new Map([
-    [Folded, { message: AllowedFolded, showHours: false }],
-    [Bakerloo, { message: AllowedBakerloo, showHours: true }],
-    [Central, { message: AllowedCentral, showHours: true }],
-    [Circle, { message: AllowedAnywhere, showHours: true }],
-    [District, { message: AllowedAnywhere, showHours: true }],
-    [DLR, { message: AllowedAnywhere, showHours: true }],
-    [Elizabeth, { message: AllowedAnywhere, showHours: true }],
-    [HammersmithCity, { message: AllowedAnywhere, showHours: true }],
-    [Jubilee, { message: AllowedJubilee, showHours: true }],
-    [Metropolitan, { message: AllowedAnywhere, showHours: true }],
-    [Northern, { message: AllowedNorthern, showHours: true }],
-    [Piccadilly, { message: AllowedPiccadilly, showHours: true }],
-    [Overground, { message: AllowedAnywhere, showHours: true }],
-    [Victoria, { message: NotAllowedEver, showHours: false }],
-    [WaterlooCity, { message: NotAllowedEver, showHours: false }],
-    [BusTram, { message: NotAllowedBusesTrams, showHours: false }],
-    [NationalRail, { message: AllowedNationalRail, showHours: false }],
-    [River, { message: AllowedRiver, showHours: false }],
-    [EmiratedAir, { message: AllowedEmiratesAir, showHours: false }],
-    [Coaches, { message: AllowedCoaches, showHours: false }],
+    [Folded, { message: AllowedFolded, showHours: false, statusColor: "green" }],
+    [Bakerloo, { message: AllowedBakerloo, showHours: true, statusColor: "orange" }],
+    [Central, { message: AllowedCentral, showHours: true, statusColor: "orange" }],
+    [Circle, { message: AllowedAnywhere, showHours: true, statusColor: "green" }],
+    [District, { message: AllowedAnywhere, showHours: true, statusColor: "green" }],
+    [DLR, { message: AllowedAnywhere, showHours: true, statusColor: "green" }],
+    [Elizabeth, { message: AllowedAnywhere, showHours: true, statusColor: "green" }],
+    [HammersmithCity, { message: AllowedAnywhere, showHours: true, statusColor: "green" }],
+    [Jubilee, { message: AllowedJubilee, showHours: true, statusColor: "orange" }],
+    [Metropolitan, { message: AllowedAnywhere, showHours: true, statusColor: "green" }],
+    [Northern, { message: AllowedNorthern, showHours: true, statusColor: "orange" }],
+    [Piccadilly, { message: AllowedPiccadilly, showHours: true, statusColor: "green" }],
+    [Overground, { message: AllowedAnywhere, showHours: true, statusColor: "green" }],
+    [Victoria, { message: NotAllowedEver, showHours: false, statusColor: "red" }],
+    [WaterlooCity, { message: NotAllowedEver, showHours: false, statusColor: "red" }],
+    [BusTram, { message: NotAllowedEver, showHours: false, statusColor: "red" }],
+    [NationalRail, { message: AllowedNationalRail, showHours: false, statusColor: "orange" }],
+    [River, { message: AllowedRiver, showHours: false, statusColor: "orange" }],
+    [EmiratedAir, { message: AllowedEmiratesAir, showHours: false, statusColor: "green" }],
+    [Coaches, { message: AllowedCoaches, showHours: false, statusColor: "orange" }],
 ]);
 
 const notAllowedSet = new Map([
-    [Folded, { message: AllowedFolded, showHours: false }],
-    [Bakerloo, { message: NotAllowed, showHours: true }],
-    [Central, { message: NotAllowed, showHours: true }],
-    [Circle, { message: NotAllowed, showHours: true }],
-    [District, { message: NotAllowed, showHours: true }],
-    [DLR, { message: NotAllowed, showHours: true }],
-    [Elizabeth, { message: PartiallyAllowedElizabeth, showHours: true }],
-    [HammersmithCity, { message: NotAllowed, showHours: true }],
-    [Jubilee, { message: NotAllowed, showHours: true }],
-    [Metropolitan, { message: NotAllowed, showHours: true }],
-    [Northern, { message: NotAllowed, showHours: true }],
-    [Piccadilly, { message: NotAllowed, showHours: true }],
-    [Overground, { message: PartiallyAllowedOverground, showHours: true }],
-    [Victoria, { message: NotAllowedEver, showHours: false }],
-    [WaterlooCity, { message: NotAllowedEver, showHours: false }],
-    [BusTram, { message: NotAllowedBusesTrams, showHours: false }],
-    [NationalRail, { message: AllowedNationalRail, showHours: false }],
-    [River, { message: AllowedRiver, showHours: false }],
-    [EmiratedAir, { message: AllowedEmiratesAir, showHours: false }],
-    [Coaches, { message: AllowedCoaches, showHours: false }],
+    [Folded, { message: AllowedFolded, showHours: false, statusColor: "green" }],
+    [Bakerloo, { message: NotAllowed, showHours: true, statusColor: "red" }],
+    [Central, { message: NotAllowed, showHours: true, statusColor: "red" }],
+    [Circle, { message: NotAllowed, showHours: true, statusColor: "red" }],
+    [District, { message: NotAllowed, showHours: true, statusColor: "red" }],
+    [DLR, { message: NotAllowed, showHours: true, statusColor: "red" }],
+    [Elizabeth, { message: PartiallyAllowedElizabeth, showHours: true, statusColor: "orange" }],
+    [HammersmithCity, { message: NotAllowed, showHours: true, statusColor: "red" }],
+    [Jubilee, { message: NotAllowed, showHours: true, statusColor: "red" }],
+    [Metropolitan, { message: NotAllowed, showHours: true, statusColor: "red" }],
+    [Northern, { message: NotAllowed, showHours: true, statusColor: "red" }],
+    [Piccadilly, { message: NotAllowed, showHours: true, statusColor: "red" }],
+    [Overground, { message: PartiallyAllowedOverground, showHours: true, statusColor: "orange" }],
+    [Victoria, { message: NotAllowedEver, showHours: false, statusColor: "red" }],
+    [WaterlooCity, { message: NotAllowedEver, showHours: false, statusColor: "red" }],
+    [BusTram, { message: NotAllowedEver, showHours: false, statusColor: "red" }],
+    [NationalRail, { message: AllowedNationalRail, showHours: false, statusColor: "red" }],
+    [River, { message: AllowedRiver, showHours: false, statusColor: "orange" }],
+    [EmiratedAir, { message: AllowedEmiratesAir, showHours: false, statusColor: "green" }],
+    [Coaches, { message: AllowedCoaches, showHours: false, statusColor: "orange" }],
 ]);
 
 const weekdayConfig = new Map([
@@ -128,7 +127,7 @@ const weekendOrHolidaysConfig = new Map([
     [nighttime_1900_2400, allowedSet],
 ]);
 
-function getLineRules(dateTime) {
+function getLineRules(dateTime = new Date()) {
     if (!arraysEqual(Array.from(allowedSet.keys()), Array.from(notAllowedSet.keys()))) {
         throw new Error("allowedSet and notAllowedSet must have the same set of keys")
     }

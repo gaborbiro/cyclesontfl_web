@@ -17,6 +17,7 @@
 
     <div id="date-picker-container">
       <input type="datetime-local" onchange="onDateSelected(this.value)" id="datetime_picker">
+      <button class="button button1" onclick="onResetClicked()">reset</button>
     </div>
 
     <table id="rules">
@@ -32,11 +33,9 @@
     const dateControl = document.querySelector('#datetime_picker');
 
     document.addEventListener('DOMContentLoaded', function () {
-      const now = new Date();
+      dateControl.value = getBST_Input_Date();
 
-      dateControl.value = getBST_Input_Date(now);
-
-      const lineRules = getLineRules(now);
+      const lineRules = getLineRules();
 
       populateRules(lineRules);
     });
@@ -51,7 +50,7 @@
      * YYYY-MM-DD'T'HH:mm
      * This can be used to set the value of the datetime-local html input field.
      */
-    function getBST_Input_Date(dateTime) {
+    function getBST_Input_Date(dateTime = new Date()) {
       const bstTimezone = 'Europe/London'
       // Cheating with the Canadian format a bit, as it produces the ISO date-format, allowing it to be used with the date picker
       const simpleFormattedDate = dateTime.toLocaleDateString('en-CA', { timeZone: bstTimezone });
@@ -70,25 +69,18 @@
         cellLine.style.color = lineColors.get(line).textColor;
         cellLine.style.backgroundColor = lineColors.get(line).backgroundColor;
         var cellRule = row.insertCell(1);
-
-        var rule;
+        cellRule.style.borderRightColor = targetRule.statusColor;
+        cellRule.style.borderRightWidth = "5px";
+        var message = `${targetRule.message.replaceAll("\n", "<br />")}`;
         if (targetRule.showHours) {
-          rule = `${targetRule.message.replaceAll("\n", "<br />")} (${targetTimeOfDay})`;
-        } else {
-          rule = `${targetRule.message.replaceAll("\n", "<br />")}`;
+          message += `<br/>(${targetTimeOfDay})`;
         }
-        // if (previousRule != targetRule || nextRule != targetRule) {
-        //   rule += "<p id='rule-small'>"
-        //   if (previousRule != targetRule) {
-        //     rule += `<br />${previousRule.replaceAll("\n", "<br />")} (${previousTimeOfDay})`;
-        //   }
-        //   if (nextRule != targetRule) {
-        //     rule += `<br />${nextRule.replaceAll("\n", "<br />")} (${nextTimeOfDay})`
-        //   } 
-        //   rule += "</p>"
-        // }
-        cellRule.innerHTML = rule;
+        cellRule.innerHTML = message;
       });
+    }
+
+    function onResetClicked() {
+      dateControl.value = getBST_Input_Date();
     }
   </script>
 </body>
