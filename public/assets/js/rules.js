@@ -62,7 +62,7 @@ const notAllowedSet = new Map([
     [Circle, NotAllowed],
     [District, NotAllowed],
     [DLR, NotAllowed],
-    [Elizabeth, "From west: until Royal Oak\nTo west: from Paddington\nFrom east: until Bethnal Green\nTo east: from Liverpool Street\nNote: until the Elizabeth Line fully opens (Sprin 2023), the times are actually slightly different"],
+    [Elizabeth, "From west: until Royal Oak\nTo west: from Paddington\nFrom east: until Bethnal Green\nTo east: from Liverpool Street\nNote: until the Elizabeth Line fully opens (Spring 2023), the times are actually slightly <a target='_blank' href='https://lcc.org.uk/news/new-connections-for-cycles-on-trains/'>different</a>"],
     [HammersmithCity, NotAllowed],
     [Jubilee, NotAllowed],
     [Metropolitan, NotAllowed],
