@@ -13,7 +13,7 @@
 
 <body>
   <div id="message">
-    <h2>Where are bicycles allowed on London public transport</h2>
+    <h2>Where are cycles allowed on London public transport</h2>
 
     <div id="date-picker-container">
       <input type="datetime-local" onchange="onDateSelected(this.value)" id="datetime_picker">
@@ -67,11 +67,16 @@
         var row = tableElement.insertRow(tableElement.rows.length);
         var cellLine = row.insertCell(0);
         cellLine.innerHTML = line;
-        cellLine.style.color = 'white';
-        cellLine.style.backgroundColor = lineColors.get(line);
+        cellLine.style.color = lineColors.get(line).textColor;
+        cellLine.style.backgroundColor = lineColors.get(line).backgroundColor;
         var cellRule = row.insertCell(1);
 
-        var rule = `${targetRule.replaceAll("\n", "<br />")} (${targetTimeOfDay})`;
+        var rule;
+        if (targetRule.showHours) {
+          rule = `${targetRule.message.replaceAll("\n", "<br />")} (${targetTimeOfDay})`;
+        } else {
+          rule = `${targetRule.message.replaceAll("\n", "<br />")}`;
+        }
         // if (previousRule != targetRule || nextRule != targetRule) {
         //   rule += "<p id='rule-small'>"
         //   if (previousRule != targetRule) {
