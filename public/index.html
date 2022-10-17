@@ -45,6 +45,11 @@
       populateRules(getLineRules(dateTime));
     }
 
+    function onResetClicked() {
+      dateControl.value = getBST_Input_Date();
+      populateRules(getLineRules());
+    }
+
     /**
      * Translates the specified date-time into the British Summer Time and formats it as following:
      * YYYY-MM-DD'T'HH:mm
@@ -77,10 +82,6 @@
         }
         cellRule.innerHTML = message;
       });
-    }
-
-    function onResetClicked() {
-      dateControl.value = getBST_Input_Date();
     }
   </script>
 </body>
