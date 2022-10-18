@@ -1,0 +1,68 @@
+@import url(https://fonts.googleapis.com/css?family=Hammersmith+One);
+
+svg {
+    font-family: 'HammersmithOne', 'Hammersmith One';
+    font-size: 4.6px;
+}
+
+@-webkit-keyframes flashline {
+    0% {
+        opacity: 0
+    }
+
+    15%,
+    70% {
+        opacity: 1
+    }
+
+    85%,
+    100% {
+        opacity: 0
+    }
+}
+
+@keyframes flashline {
+    0% {
+        opacity: 0
+    }
+
+    15%,
+    70% {
+        opacity: 1
+    }
+
+    85%,
+    100% {
+        opacity: 0
+    }
+}
+
+.linedisrupted {
+    -webkit-animation: flashline 1s ease infinite;
+    animation: flashline 1s ease infinite;
+}
+
+#lines_container {
+    margin-left: 25px;
+    
+}
+
+#lines_container_title {
+    font-family: 'HammersmithOne', 'Hammersmith One';
+    font-size: 13px;
+    display: inline;
+}
+
+.button {
+    text-align: center;
+    font-family: 'HammersmithOne', 'Hammersmith One';
+    font-size: 11px;
+    display: inline-block;
+    margin-left: 10px;
+    margin-top: 10px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    border-radius: 4px;
+}

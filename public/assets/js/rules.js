@@ -1,24 +1,3 @@
-const Folded = "Folded cycles";
-const Bakerloo = "Bakerloo";
-const Central = "Central";
-const Circle = "Circle";
-const District = "District";
-const DLR = "DLR";
-const Elizabeth = "Elizabeth";
-const HammersmithCity = "Hammersmith & City";
-const Jubilee = "Jubilee";
-const Metropolitan = "Metropolitan";
-const Northern = "Northern";
-const Overground = "Overground";
-const Piccadilly = "Piccadilly";
-const Victoria = "Victoria";
-const WaterlooCity = "Waterloo & City";
-const BusTram = "Bus and Tram"
-const NationalRail = "National Rail"
-const River = "River"
-const EmiratedAir = "Emirates Air Line"
-const Coaches = "Coaches"
-
 const AllowedFolded = "You can take folded cycles anywhere, at any time on all transport services. However, on buses the driver can decide not to let you travel if it's too busy.";
 const AllowedAnywhere = "Allowed anywhere";
 const NotAllowed = "Not allowed";
@@ -32,32 +11,8 @@ const AllowedCentral = "Between Leyton, Epping and Newbury Park (via Hainault on
 const AllowedJubilee = "Between Stratford and Canning Town\nBetween Finchley Road and Stanmore";
 const AllowedNorthern = "Between Golders Green and Hendon Central\nBetween Colindale and Edgware\nBetween East Finchley, Mill Hill East and High Barnet";
 const AllowedPiccadilly = "Between Oakwood and Cockfosters\nBetween Barons Court, Hounslow West and Uxbridge";
-const PartiallyAllowedElizabeth = "From west: until Royal Oak\nTo west: from Paddington\nFrom east: until Bethnal Green\nTo east: from Liverpool Street\nNote: until the Elizabeth Line fully opens (Spring 2023), the times are actually slightly <a target='_blank' href='https://lcc.org.uk/news/new-connections-for-cycles-on-trains/'>different</a>";
+const PartiallyAllowedElizabeth = "From west: until Royal Oak\nTo west: from Paddington\nFrom east: until Bethnal Green\nTo east: from Liverpool Street\n\nNote: until the Elizabeth Line fully opens (Spring 2023), the times are actually slightly <a target='_blank' href='https://lcc.org.uk/news/new-connections-for-cycles-on-trains/'>different</a>";
 const PartiallyAllowedOverground = "From Liverpool Street station going towards Chingford, Enfield Town or Cheshunt.\nComing from Chingford, Enfield Town or Cheshunt until Bethnal Green.";
-
-
-const lineColors = new Map([
-    [Folded, { backgroundColor: "#FFFFFF", textColor: "#000000" }],
-    [Bakerloo, { backgroundColor: "#B36305", textColor: "#ffffff" }],
-    [Central, { backgroundColor: "#E32017", textColor: "#ffffff" }],
-    [Circle, { backgroundColor: "#FFD300", textColor: "#ffffff" }],
-    [District, { backgroundColor: "#00782A", textColor: "#ffffff" }],
-    [DLR, { backgroundColor: "#00A4A7", textColor: "#ffffff" }],
-    [Elizabeth, { backgroundColor: "#9364CD", textColor: "#ffffff" }],
-    [HammersmithCity, { backgroundColor: "#F3A9BB", textColor: "#ffffff" }],
-    [Jubilee, { backgroundColor: "#A0A5A9", textColor: "#ffffff" }],
-    [Metropolitan, { backgroundColor: "#9B0056", textColor: "#ffffff" }],
-    [Northern, { backgroundColor: "#000000", textColor: "#ffffff" }],
-    [Overground, { backgroundColor: "#EE7C0E", textColor: "#ffffff" }],
-    [Piccadilly, { backgroundColor: "#003688", textColor: "#ffffff" }],
-    [Victoria, { backgroundColor: "#0098D4", textColor: "#ffffff" }],
-    [WaterlooCity, { backgroundColor: "#95CDBA", textColor: "#ffffff" }],
-    [BusTram, { backgroundColor: "#FFFFFF", textColor: "#000000" }],
-    [NationalRail, { backgroundColor: "#FFFFFF", textColor: "#000000" }],
-    [River, { backgroundColor: "#FFFFFF", textColor: "#000000" }],
-    [EmiratedAir, { backgroundColor: "#FFFFFF", textColor: "#000000" }],
-    [Coaches, { backgroundColor: "#FFFFFF", textColor: "#000000" }],
-]);
 
 const pastMidnight_0000_0730 = "00:00-07:30";
 const morningPeak_0730_0930 = "07:30-09:30";
@@ -136,12 +91,6 @@ function getLineRules(dateTime = new Date()) {
     const minute = dateTime.getMinutes();
     const timestamp = hour * 60 + minute;
 
-    const day = dateTime.getDay()
-    const previousDay = (day - 1).mod(7);
-    const targetDay = day;
-    const nextDay = (day + 1).mod(7);
-    // console.log(`previousDay: ${previousDay}, targetDay: ${targetDay}, nextDay: ${nextDay}`);
-
     const weekConfigList = [
         weekendOrHolidaysConfig, // 0 Sunday
         weekdayConfig, // 1 - Monday
@@ -152,9 +101,10 @@ function getLineRules(dateTime = new Date()) {
         weekendOrHolidaysConfig, // 6 Saturday
     ]
 
-    const previousDayConfig = weekConfigList[previousDay];
-    const targetDayConfig = weekConfigList[targetDay];
-    const nextDayConfig = weekConfigList[nextDay];
+    const day = dateTime.getDay()
+    const previousDayConfig = weekConfigList[(day - 1).mod(7)];
+    const targetDayConfig = weekConfigList[day];
+    const nextDayConfig = weekConfigList[(day + 1).mod(7)];
 
     let previousTimeOfDay;
     let targetTimeOfDay;
@@ -187,14 +137,13 @@ function getLineRules(dateTime = new Date()) {
             nextTimeOfDay = pastMidnight_0000_0730;
             break;
     }
-    // console.log(`previousTimeOfDay: ${previousTimeOfDay}, targetTimeOfDay: ${targetTimeOfDay}, nextTimeOfDay: ${nextTimeOfDay}`);
 
     const previousSet = previousDayConfig.get(previousTimeOfDay);
     const targetSet = targetDayConfig.get(targetTimeOfDay);
     const nextSet = nextDayConfig.get(nextTimeOfDay);
-    // console.log(`targetLineRules: ${Array.from(targetSet)}`);
 
     const lines = Array.from(allowedSet.keys());
+    
     const rules = new Map();
     lines.forEach(line => {
         rules.set(line, {
@@ -208,25 +157,4 @@ function getLineRules(dateTime = new Date()) {
     });
 
     return rules;
-}
-
-function printConfigList(configList) {
-    var result = "";
-    configList.forEach((config) => {
-        result = result + `\n\n${printConfig(config)}`;
-    });
-    return result;
-}
-
-function printConfig(config) {
-    var result = "";
-    config.forEach((lineRules, period) => {
-        result = result + `\n${period} - ${Array.from(lineRules)}`;
-    });
-    return result;
-}
-
-Number.prototype.mod = function (b) {
-    // Calculate
-    return ((this % b) + b) % b;
 }

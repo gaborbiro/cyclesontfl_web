@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link href="./assets/css/styles_disruptions.css" rel="stylesheet">
+    <script src="./assets/js/constants.js"></script>
+    <script src="./assets/js/disruptions.js"></script>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <title>Disruptions</title>
+</head>
+
+<body>
+    <div id="lines_container">
+        <p id="lines_container_title">No disruptions</p>
+    </div>
+    <svg data-tag="May2018b" version="1.1" viewbox="0 0 1247 907" preserveAspectRatio="none"
+        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1247.244px"
+        height="907.087px">
+        <!-- This svg node will be replaced by /tubemap.svg#status-map -->
+    </svg>
+    <script>
+        let CACHE = {};
+        document.addEventListener('DOMContentLoaded', function () {
+            let svgNode = document.querySelector('svg');
+
+            var
+                bodyNode = svgNode.parentNode,
+                url_root = "tubemap.svg",
+                xhr = CACHE[url_root] = CACHE[url_root] || new XMLHttpRequest();
+
+            xhr.open('GET', url_root);
+
+            xhr.onload = function () {
+                var container = document.createElement('x');
+                container.innerHTML = xhr.responseText;
+
+                var newSvgNode = container.querySelector('#status-map');
+
+                if (newSvgNode) bodyNode.replaceChild(newSvgNode.cloneNode(true), svgNode);
+
+                loadDisruptions(document, CACHE);
+            };
+
+            xhr.send();
+        });
+    </script>
+</body>
+
+</html>

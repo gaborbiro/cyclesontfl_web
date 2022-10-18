@@ -7,8 +7,8 @@
 
   <link href="./assets/css/styles.css" rel="stylesheet">
   <script src="./assets/js/utils.js"></script>
+  <script src="./assets/js/constants.js"></script>
   <script src="./assets/js/rules.js"></script>
-  </script>
 </head>
 
 <body>
@@ -23,6 +23,13 @@
     <table id="rules">
 
     </table>
+    <div>
+      <div id="resource"><a target='_blank'
+          href='https://tfl.gov.uk/cdn/static/cms/documents/cycles-on-public-transport.pdf'>Cycles on
+          Public
+          Transport map (PDF)</a></div>
+      <div id="resource"><a target='_blank' href='disruptions.html'>Disruptions</a></div>
+    </div>
   </div>
   <p id="footer">Source: <a
       href="https://tfl.gov.uk/modes/cycling/cycles-on-public-transport">https://tfl.gov.uk/modes/cycling/cycles-on-public-transport</a>
@@ -30,9 +37,8 @@
   <p id="footer">Leave a feedback: <a href='mailto:droidique@gmail.com'>droidique@gmail.com</a></p>
 
   <script>
-    const dateControl = document.querySelector('#datetime_picker');
-
     document.addEventListener('DOMContentLoaded', function () {
+      const dateControl = document.querySelector('#datetime_picker');
       dateControl.value = getBST_Input_Date();
 
       const lineRules = getLineRules();
@@ -46,6 +52,7 @@
     }
 
     function onResetClicked() {
+      const dateControl = document.querySelector('#datetime_picker');
       dateControl.value = getBST_Input_Date();
       populateRules(getLineRules());
     }

@@ -11,3 +11,8 @@ function arraysEqual(array1, array2) {
     }
     return true;
 }
+
+Number.prototype.mod = function (b) {
+    // Calculate
+    return ((this % b) + b) % b;
+}
