@@ -3,10 +3,12 @@
 
 <head>
     <link href="./assets/css/styles_disruptions.css" rel="stylesheet">
-    <script src="./assets/js/constants.js"></script>
-    <script src="./assets/js/disruptions/disruptions.js"></script>
-    <script src="./assets/js/disruptions/view.js"></script>
-    <script src="./assets/js/utils.js"></script>
+    <script src="./assets/js/common/utils.js"></script>
+    <script src="./assets/js/common/error.js"></script>
+    <script src="./assets/js/common/constants.js"></script>
+    <script src="./assets/js/common/ViewModel.js"></script>  
+    <script src="./assets/js/features/disruptions/DisruptionsViewModel.js"></script>
+    <script src="./assets/js/features/disruptions/DisruptionsView.js"></script>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <title>Disruptions</title>
 </head>
@@ -22,9 +24,17 @@
     </svg>
     <script>
         let renderer = new DisruptionView()
-        renderer.showMap = function (map) {
+        renderer.displayMap = displayMap;
+        renderer.displayDisruptions = displayDisruptions;
+        renderer.showError = globalHandleUIError;
+        new DisruptionViewModel(document, renderer);
+
+
+
+
+        function displayMap(mapData) {
             var container = document.createElement('x');
-            container.innerHTML = map;
+            container.innerHTML = mapData;
             let svgNode = document.querySelector('svg');
             var bodyNode = svgNode.parentNode;
 
@@ -32,10 +42,45 @@
 
             if (newSvgNode) bodyNode.replaceChild(newSvgNode.cloneNode(true), svgNode);
         }
-        renderer.showError = function (error) {
-            handleError(error);
+
+        function displayDisruptions(disruptionUIModels) {
+            if (disruptionUIModels.length > 0) {
+                document.querySelector('#lines_container_title').innerHTML = "Disruptions:";
+                var disruptedLinesContainer = document.querySelector('#lines_container');
+                disruptionUIModels.forEach(disruption => adaptDistruptionUIModel(disruption, disruptedLinesContainer));
+            } else {
+                document.querySelector('#lines_container_title').innerHTML = "No disruptions";
+            }
         }
-        new DisruptionViewModel(document, renderer);
+
+        function adaptDistruptionUIModel(disruption, container) {
+            var lineButton = document.createElement("div");
+            adaptLineUIModel(disruption.line, lineButton);
+            container.appendChild(lineButton);
+
+            var segments = disruption.segments;
+            segments.forEach(adaptSegmentUIModel);
+        }
+
+        function adaptLineUIModel(lineUIModel, node) {
+            node.setAttribute("class", "button");
+            node.style.backgroundColor = lineUIModel.backgroundColor;
+            node.style.color = lineUIModel.textColor;
+            node.innerHTML = lineUIModel.name;
+        }
+
+        function adaptSegmentUIModel(segment) {
+            var segmentNode = document.querySelector(segment.id);
+
+            if (!segmentNode) {
+                var segmentNode = document.querySelector(segment.idAlt);
+            }
+
+            if (segmentNode) {
+                segmentNode.setAttribute('class', "linedisrupted");
+                segmentNode.setAttribute('stroke-dasharray', "3, 1");
+            }
+        }
     </script>
 </body>
 

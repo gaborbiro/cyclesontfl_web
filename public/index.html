@@ -6,9 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <link href="./assets/css/styles.css" rel="stylesheet">
-  <script src="./assets/js/utils.js"></script>
-  <script src="./assets/js/constants.js"></script>
-  <script src="./assets/js/rules/rules.js"></script>
+  <script src="./assets/js/common/utils.js"></script>
+  <script src="./assets/js/common/error.js"></script>
+  <script src="./assets/js/common/constants.js"></script>
+  <script src="./assets/js/common/ViewModel.js"></script>  
+  <script src="./assets/js/features/rules/constants.js"></script>
+  <script src="./assets/js/features/rules/rules.js"></script>
+  <script src="./assets/js/features/rules/view.js"></script>
 </head>
 
 <body>
@@ -37,58 +41,48 @@
   <p id="footer">Leave a feedback: <a href='mailto:droidique@gmail.com'>droidique@gmail.com</a></p>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const dateControl = document.querySelector('#datetime_picker');
-      dateControl.value = getBST_Input_Date();
+    let renderer = new RulesView()
+    renderer.populateRules = renderRulesUIModel;
+    renderer.showError = globalHandleUIError;
+    let viewModel = new RulesViewModel(document, renderer);
 
-      const lineRules = getLineRules();
 
-      populateRules(lineRules);
-    });
 
     function onDateSelected(rawDateTime) {
       const dateTime = new Date(`${rawDateTime}`);
-      populateRules(getLineRules(dateTime));
+      viewModel.onNewDateTimeSelected(dateTime);
     }
 
     function onResetClicked() {
+      viewModel.onResetClicked();
+    }
+
+    function renderRulesUIModel(rules) {
+      var { dateTime, lineRules } = rules;
       const dateControl = document.querySelector('#datetime_picker');
-      dateControl.value = getBST_Input_Date();
-      populateRules(getLineRules());
-    }
-
-    /**
-     * Translates the specified date-time into the British Summer Time and formats it as following:
-     * YYYY-MM-DD'T'HH:mm
-     * This can be used to set the value of the datetime-local html input field.
-     */
-    function getBST_Input_Date(dateTime = new Date()) {
-      const bstTimezone = 'Europe/London'
-      // Cheating with the Canadian format a bit, as it produces the ISO date-format, allowing it to be used with the date picker
-      const simpleFormattedDate = dateTime.toLocaleDateString('en-CA', { timeZone: bstTimezone });
-      const simpleFormattedTime = dateTime.toLocaleTimeString('en-GB', { timeZone: bstTimezone });
-      return `${simpleFormattedDate}T${simpleFormattedTime}`.substring(0, 16);
-    }
-
-    function populateRules(lineRules) {
+      dateControl.value = dateTime;
       const tableElement = document.querySelector('#rules');
       tableElement.innerHTML = "";
-      lineRules.forEach((lineRule, line) => {
-        const { previousTimeOfDay, previousRule, targetTimeOfDay, targetRule, nextTimeOfDay, nextRule } = lineRule;
+      lineRules.forEach(ruleEntry => {
         var row = tableElement.insertRow(tableElement.rows.length);
-        var cellLine = row.insertCell(0);
-        cellLine.innerHTML = line;
-        cellLine.style.color = LineColors.get(line).textColor;
-        cellLine.style.backgroundColor = LineColors.get(line).backgroundColor;
-        var cellRule = row.insertCell(1);
-        cellRule.style.borderRightColor = targetRule.statusColor;
-        cellRule.style.borderRightWidth = "5px";
-        var message = `${targetRule.message.replaceAll("\n", "<br />")}`;
-        if (targetRule.showHours) {
-          message += `<br/>(${targetTimeOfDay})`;
-        }
-        cellRule.innerHTML = message;
+        adaptRuleRow(row, ruleEntry.line, ruleEntry.targetRule, ruleEntry.targetTimeOfDay);
       });
+    }
+
+    function adaptRuleRow(row, line, targetRule, targetTimeOfDay) {
+      var cellLine = row.insertCell(0);
+      cellLine.innerHTML = RuleEntryInfo.get(line).name;
+      cellLine.style.color = RuleEntryInfo.get(line).textColor;
+      cellLine.style.backgroundColor = RuleEntryInfo.get(line).backgroundColor;
+
+      var cellRule = row.insertCell(1);
+      cellRule.style.borderRightColor = targetRule.statusColor;
+      cellRule.style.borderRightWidth = "5px";
+      var message = `${targetRule.message.replaceAll("\n", "<br />")}`;
+      if (targetRule.showHours) {
+        message += `<br/>(${targetTimeOfDay})`;
+      }
+      cellRule.innerHTML = message;
     }
   </script>
 </body>

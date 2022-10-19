@@ -1,33 +1,19 @@
-const LineMapping = new Map([
-    ["bakerloo", Bakerloo],
-    ["central", Central],
-    ["circle", Circle],
-    ["district", District],
-    ["dlr", DLR],
-    ["elizabeth", Elizabeth],
-    ["hammersmith-city", HammersmithCity],
-    ["jubilee", Jubilee],
-    ["metropolitan", Metropolitan],
-    ["northern", Northern],
-    ["london-overground", Overground],
-    ["piccadilly", Piccadilly],
-    ["victoria", Victoria],
-    ["waterloo-city", WaterlooCity],
-]);
-
-class DisruptionViewModel {
+class DisruptionViewModel extends ViewModel {
     CACHE = {};
-    view;
 
-    constructor(document, disruptionView) {
-        this.view = disruptionView;
-        document.addEventListener('DOMContentLoaded', () => {
-            this
-                .loadMap()
-                .then(this.view.showMap)
-                .then(this.loadDisruptions)
-                .catch(this.view.showError);
-        });
+    constructor(document, view) {
+        super(document, view);
+    }
+
+    // Override
+    onPageReady() {
+        this
+            .loadMap()
+            .then(this.view.displayMap)
+            .then(this.loadDisruptions)
+            .then(this.view.displayDisruptions)
+
+            .catch(this.view.showError);
     }
 
     loadMap = () => {
@@ -46,7 +32,7 @@ class DisruptionViewModel {
             };
             xhr.onerror = function () {
                 // safeLog(`loadMap onerror: code: ${xhr.statusCode} status: ${xhr.statusText} payload: ${xhr.responseText}`);
-                reject(parseError(xhr));
+                reject(parseHttpError(xhr));
             };
             xhr.send();
         }).catch(function (error) {
@@ -56,8 +42,12 @@ class DisruptionViewModel {
 
     loadDisruptions = () => {
         return new Promise((resolve, reject) => {
-            // var url = "https://api.tfl.gov.uk/Line/Mode/tube,dlr,overground/Status?detail=true";
-            var url = "assets/json/bakerloo_district_disrupted.json";
+            if (DEBUG) {
+                var url = "assets/json/bakerloo_district_disrupted.json";
+            } else {
+                var url = "https://api.tfl.gov.uk/Line/Mode/tube,dlr,overground/Status?detail=true";
+            }
+
             var xhr = this.CACHE[url] = this.CACHE[url] || new XMLHttpRequest();
             xhr.open('GET', url);
             xhr.viewModel = this
@@ -65,17 +55,22 @@ class DisruptionViewModel {
                 // safeLog(`loadDisruptions onload: code: ${xhr.statusCode} status: ${xhr.statusText} payload: ${xhr.responseText}`);
                 if (xhr.status == "200") {
                     var statusJSON = JSON.parse(xhr.responseText);
-                    statusJSON.forEach((statusEntry) => {
-                        this.viewModel.processLine(statusEntry);
+                    let result = [];
+                    var lineResult;
+                    statusJSON.forEach((line) => {
+                        lineResult = this.viewModel.processLine(line);
+                        if (lineResult) {
+                            result.push(lineResult);
+                        }
                     });
-                    resolve();
+                    resolve(result);
                 } else {
                     reject(parseTflError(xhr));
                 }
             }
             xhr.onerror = function () {
                 // safeLog(`loadDisruptions onerror: code: ${xhr.statusCode} status: ${xhr.statusText} payload: ${xhr.responseText}`);
-                reject(parseError(xhr));
+                reject(parseHttpError(xhr));
             };
             xhr.send();
         }).catch(function (error) {
@@ -105,38 +100,46 @@ class DisruptionViewModel {
                 throw new Error(`Unexpected mode ${mode}`);
         }
 
+        var statusSegments = [];
         line.lineStatuses
             .filter(lineStatus => lineStatus.disruption && lineStatus.disruption.affectedRoutes)
             .forEach(lineStatus => {
-                safeLog(`Processing lineStatus ${lineStatus}`);
                 lineStatus.disruption.affectedRoutes
                     .filter(route => route.routeSectionNaptanEntrySequence)
                     .forEach(route => {
-                        this.processRoute(route, modeConv, lineId);
+                        var segments = this.processRoute(route, modeConv, lineId);
+                        statusSegments.push(segments);
                     });
             });
         if (line.lineStatuses.some(lineStatus => lineStatus.disruption && lineStatus.disruption.affectedRoutes)) {
-            document.querySelector('#lines_container_title').innerHTML = "Disruptions:"
-            this.addLineButton(line);
+            return this.mapLineUIModel(line, statusSegments);
+        } else {
+            return undefined
         }
     }
 
-    addLineButton= (line) => {
-        var disruptedLinesContainer = document.querySelector('#lines_container');
-        var simpleLine = LineMapping.get(line.id);
-
-        var lineButton = document.createElement("div");
-        lineButton.setAttribute("class", "button");
-        lineButton.style.backgroundColor = Lines.get(simpleLine).backgroundColor;
-        lineButton.style.color = Lines.get(simpleLine).textColor;
-        lineButton.innerHTML = line.name;
-        disruptedLinesContainer.appendChild(lineButton);
+    mapLineUIModel = (line, statusSegments) => {
+        var simpleLineInfo = LineInfo.get(line.id);
+        var lineUIModel = new LineUIModel(
+            simpleLineInfo.name,
+            simpleLineInfo.backgroundColor,
+            simpleLineInfo.textColor
+        )
+        var segments = [];
+        statusSegments.forEach((routeSegments) => {
+            routeSegments.forEach((segment) => {
+                segments.push(new SegmentUIModel(segment.segmentId, segment.segmentIdAlt));
+                segments.push(new SegmentUIModel(segment.segmentIdReverse, segment.segmentIdReverseAlt));
+            });
+        })
+        return new DisruptionUIModel(lineUIModel, segments);
     }
 
     // segment ids: [\w]+-[\w]+_[\w\d]+_[\w\d]+
-    processRoute= (route, modeConv, lineId) => {
+    processRoute = (route, modeConv, lineId) => {
         var startcode = null;
         var endcode = null;
+        var result = [];
         route.routeSectionNaptanEntrySequence
             .filter(naptanEntrySequence => naptanEntrySequence.stopPoint)
             .forEach(naptanEntrySequence => {
@@ -148,30 +151,17 @@ class DisruptionViewModel {
                 }
                 if (startcode && endcode) {
                     var segmentId = '#' + modeConv + "-" + lineId + "_" + startcode.toLowerCase() + "_" + endcode.toLowerCase();
-                    var segment = document.querySelector(segmentId);
-
-                    if (!segment) {
-                        var segmentId = '#' + modeConv + "-" + lineId + "_" + startcode.toLowerCase() + "_" + endcode.toLowerCase() + "_2_";
-                        var segment = document.querySelector(segmentId);
-                    }
-
+                    var segmentIdAlt = '#' + modeConv + "-" + lineId + "_" + startcode.toLowerCase() + "_" + endcode.toLowerCase() + "_2_";
                     var segmentIdReverse = '#' + modeConv + "-" + lineId + "_" + endcode.toLowerCase() + "_" + startcode.toLowerCase();
-                    var segmentReverse = document.querySelector(segmentIdReverse);
-
-                    if (!segmentReverse) {
-                        var segmentId = '#' + modeConv + "-" + lineId + "_" + endcode.toLowerCase() + "_" + startcode.toLowerCase() + "_2_";
-                        var segmentReverse = document.querySelector(segmentId);
-                    }
-
-                    if (segment) {
-                        segment.setAttribute('class', "linedisrupted");
-                        segment.setAttribute('stroke-dasharray', "3, 1");
-                    }
-                    if (segmentReverse) {
-                        segmentReverse.setAttribute('class', "linedisrupted");
-                        segmentReverse.setAttribute('stroke-dasharray', "3, 1");
-                    }
+                    var segmentIdReverseAlt = '#' + modeConv + "-" + lineId + "_" + endcode.toLowerCase() + "_" + startcode.toLowerCase() + "_2_";
+                    result.push({
+                        "segmentId": segmentId,
+                        "segmentIdAlt": segmentIdAlt,
+                        "segmentIdReverse": segmentIdReverse,
+                        "segmentIdReverseAlt": segmentIdReverseAlt,
+                    })
                 }
             });
+        return result;
     }
 }
