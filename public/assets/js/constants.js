@@ -1,3 +1,5 @@
+const DEBUG = window.location.hostname === 'localhost'
+
 const Folded = "Folded cycles";
 const Bakerloo = "Bakerloo";
 const Central = "Central";
@@ -19,7 +21,7 @@ const River = "River"
 const EmiratedAir = "Emirates Air Line"
 const Coaches = "Coaches"
 
-const lineColors = new Map([
+const LineColors = new Map([
     [Folded, { backgroundColor: "#FFFFFF", textColor: "#000000" }],
     [Bakerloo, { backgroundColor: "#B36305", textColor: "#ffffff" }],
     [Central, { backgroundColor: "#E32017", textColor: "#ffffff" }],

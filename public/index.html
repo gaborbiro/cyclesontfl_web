@@ -8,7 +8,7 @@
   <link href="./assets/css/styles.css" rel="stylesheet">
   <script src="./assets/js/utils.js"></script>
   <script src="./assets/js/constants.js"></script>
-  <script src="./assets/js/rules.js"></script>
+  <script src="./assets/js/rules/rules.js"></script>
 </head>
 
 <body>
@@ -78,8 +78,8 @@
         var row = tableElement.insertRow(tableElement.rows.length);
         var cellLine = row.insertCell(0);
         cellLine.innerHTML = line;
-        cellLine.style.color = lineColors.get(line).textColor;
-        cellLine.style.backgroundColor = lineColors.get(line).backgroundColor;
+        cellLine.style.color = LineColors.get(line).textColor;
+        cellLine.style.backgroundColor = LineColors.get(line).backgroundColor;
         var cellRule = row.insertCell(1);
         cellRule.style.borderRightColor = targetRule.statusColor;
         cellRule.style.borderRightWidth = "5px";
