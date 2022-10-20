@@ -44,7 +44,9 @@ class NetworkError extends AppError {
 
 function globalHandleUIError(error) {
     console.log(error);
-    console.log(`Debug info: ${error.debugInfo}`);
+    if (error.debugInfo) {
+        console.log(`Debug info: ${error.debugInfo}`);
+    }
     if (error instanceof AppError) {
         alert(error.message);
         if (error instanceof NetworkError && error.htmlContent) {

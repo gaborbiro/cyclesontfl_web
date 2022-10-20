@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+
+    <link href="./assets/css/styles.css" rel="stylesheet">
+    <script src="./common/utils.js"></script>
+    <script src="./common/error.js"></script>
+    <script src="./common/constants.js"></script>
+    <script src="./common/ViewModel.js"></script>
+    <script src="./features/rules/constants.js"></script>
+    <script src="./features/rules/RulesRepository.js"></script>
+    <script src="./features/rules/RulesViewModel.js"></script>
+    <script src="./features/rules/RulesViewInterface.js"></script>
+    <script src="./features/rules/RulesView.js"></script>
+
+    <title>Cycles on TFL</title>
+</head>
+
+<body>
+    <div w3-include-html="features/rules/rules_content.html"></div>
+</body>
+
+<script type="module">
+    try {
+        await includeHTMLs(document);
+        let viewModel = new RulesViewModel(new RulesView());
+
+        document.addEventListener('DOMContentLoaded', () => {
+            viewModel.onPageReady()
+        });
+    } catch (error) {
+        globalHandleUIError(error);
+    }
+    function onDateSelected(rawDateTime) {
+        const dateTime = new Date(`${rawDateTime}`);
+        viewModel.onNewDateTimeSelected(dateTime);
+    }
+
+    function onResetClicked() {
+        viewModel.onResetClicked();
+    }
+</script>
+
+</html>

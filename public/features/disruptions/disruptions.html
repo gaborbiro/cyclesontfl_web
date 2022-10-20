@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+
+    <link href="./assets/css/styles_disruptions.css" rel="stylesheet">
+    <script src="./common/utils.js"></script>
+    <script src="./common/error.js"></script>
+    <script src="./common/constants.js"></script>
+    <script src="./common/ViewModel.js"></script>
+    <script src="./features/disruptions/DisruptionsDatasource.js"></script>
+    <script src="./features/disruptions/DisruptionsRepository.js"></script>
+    <script src="./features/disruptions/DisruptionsViewModel.js"></script>
+    <script src="./features/disruptions/DisruptionsViewInterface.js"></script>
+    <script src="./features/disruptions/DisruptionsView.js"></script>
+
+    <title>Disruptions</title>
+</head>
+
+<body>
+    <div id="lines_container">
+        <p id="lines_container_title"></p>
+    </div>
+    <svg data-tag="May2018b" version="1.1" viewbox="0 0 1247 907" preserveAspectRatio="none"
+        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1247.244px"
+        height="907.087px">
+        <!-- This svg node will be replaced by /tubemap.svg#status-map -->
+    </svg>
+</body>
+
+<script>
+    var viewModel = new DisruptionViewModel(new DisruptionsView());
+
+    document.addEventListener('DOMContentLoaded', () => {
+        viewModel.onPageReady()
+    });
+</script>
+
+</html>

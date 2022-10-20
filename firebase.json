@@ -8,10 +8,15 @@
     ],
     "rewrites": [
       {
-        "source": "**",
-        "destination": "/index.html"
+        "source": "/",
+        "destination": "/features/rules/rules.html"
+      },
+      {
+        "source": "/disruptions",
+        "destination": "/features/disruptions/disruptions.html"
       }
-    ]
+    ],
+    "cleanUrls": true
   },
   "emulators": {
     "functions": {

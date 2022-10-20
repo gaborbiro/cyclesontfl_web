@@ -1,15 +1,15 @@
-class DisruptionView {
+class DisruptionsViewInterface {
 
-    displayMap(mapData) { }
+    displayMap(mapData) { } // string object containing svg data
 
-    displayDisruptions(disruptions) { } // list of DisruptionUIModel objects
+    displayDisruptions(disruptions) { } // list of DisruptionUIModels
 
     showError(error) { }
 }
 
 class DisruptionUIModel {
-    line; // LineUIModel instance
-    segments; // list of SegmentUIModel instances
+    line; // LineUIModel
+    segments; // list of SegmentUIModels
 
     constructor(line, segments) {
         this.line = line;

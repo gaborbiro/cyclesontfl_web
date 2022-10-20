@@ -1,84 +1,37 @@
-class DisruptionViewModel extends ViewModel {
-    CACHE = {};
+class DisruptionsRepository {
 
-    constructor(document, view) {
-        super(document, view);
-    }
-
-    // Override
-    onPageReady() {
-        this
-            .loadMap()
-            .then(this.view.displayMap)
-            .then(this.loadDisruptions)
-            .then(this.view.displayDisruptions)
-
-            .catch(this.view.showError);
-    }
+    #datasource = new DisruptionsDatasource();
 
     loadMap = () => {
-        return new Promise((resolve, reject) => {
-            var url = "assets/svg/tubemap.svg"
-            var xhr = this.CACHE[url] = this.CACHE[url] || new XMLHttpRequest();
-
-            xhr.open('GET', url);
-            xhr.onload = function () {
-                // safeLog(`loadMap onload: code: ${xhr.statusCode} status: ${xhr.statusText} payload: ${xhr.responseText}`);
-                if (xhr.status == "200") {
-                    resolve(xhr.responseText);
-                } else {
-                    reject(parseMapLoadingError(xhr));
-                }
-            };
-            xhr.onerror = function () {
-                // safeLog(`loadMap onerror: code: ${xhr.statusCode} status: ${xhr.statusText} payload: ${xhr.responseText}`);
-                reject(parseHttpError(xhr));
-            };
-            xhr.send();
-        }).catch(function (error) {
-            throw checkError(error);
-        });
+        return this.#datasource
+            .getMap()
+            .catch(function (error) {
+                throw checkError(error);
+            });
     }
 
     loadDisruptions = () => {
-        return new Promise((resolve, reject) => {
-            if (DEBUG) {
-                var url = "assets/json/bakerloo_district_disrupted.json";
-            } else {
-                var url = "https://api.tfl.gov.uk/Line/Mode/tube,dlr,overground/Status?detail=true";
-            }
-
-            var xhr = this.CACHE[url] = this.CACHE[url] || new XMLHttpRequest();
-            xhr.open('GET', url);
-            xhr.viewModel = this
-            xhr.onload = function () {
-                // safeLog(`loadDisruptions onload: code: ${xhr.statusCode} status: ${xhr.statusText} payload: ${xhr.responseText}`);
-                if (xhr.status == "200") {
-                    var statusJSON = JSON.parse(xhr.responseText);
-                    let result = [];
-                    var lineResult;
-                    statusJSON.forEach((line) => {
-                        lineResult = this.viewModel.processLine(line);
-                        if (lineResult) {
-                            result.push(lineResult);
-                        }
-                    });
-                    resolve(result);
-                } else {
-                    reject(parseTflError(xhr));
-                }
-            }
-            xhr.onerror = function () {
-                // safeLog(`loadDisruptions onerror: code: ${xhr.statusCode} status: ${xhr.statusText} payload: ${xhr.responseText}`);
-                reject(parseHttpError(xhr));
-            };
-            xhr.send();
-        }).catch(function (error) {
-            throw checkError(error);
-        });
+        return this.#datasource
+            .getDisruptions()
+            .then((statusJSON) => this.#processStatusJSON(statusJSON))
+            .catch(function (error) {
+                throw checkError(error);
+            });
     }
 
-    processLine = (line) => {
+    #processStatusJSON(statusJSON) {
+        let result = [];
+        var lineResult;
+        statusJSON.forEach((line) => {
+            lineResult = this.#processLine(line);
+            if (lineResult) {
+                result.push(lineResult);
+            }
+        });
+        return result;
+    }
+
+    #processLine = (line) => {
         var lineId = line.id;
         var mode = line.modeName;
         if (!line.lineStatuses) {
@@ -107,18 +60,18 @@ class DisruptionViewModel extends ViewModel {
                 lineStatus.disruption.affectedRoutes
                     .filter(route => route.routeSectionNaptanEntrySequence)
                     .forEach(route => {
-                        var segments = this.processRoute(route, modeConv, lineId);
+                        var segments = this.#processRoute(route, modeConv, lineId);
                         statusSegments.push(segments);
                     });
             });
         if (line.lineStatuses.some(lineStatus => lineStatus.disruption && lineStatus.disruption.affectedRoutes)) {
-            return this.mapLineUIModel(line, statusSegments);
+            return this.#mapLineUIModel(line, statusSegments);
         } else {
             return undefined
         }
     }
 
-    mapLineUIModel = (line, statusSegments) => {
+    #mapLineUIModel = (line, statusSegments) => {
         var simpleLineInfo = LineInfo.get(line.id);
         var lineUIModel = new LineUIModel(
             simpleLineInfo.name,
@@ -136,7 +89,7 @@ class DisruptionViewModel extends ViewModel {
     }
 
     // segment ids: [\w]+-[\w]+_[\w\d]+_[\w\d]+
-    processRoute = (route, modeConv, lineId) => {
+    #processRoute = (route, modeConv, lineId) => {
         var startcode = null;
         var endcode = null;
         var result = [];

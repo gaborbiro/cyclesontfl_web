@@ -1,10 +1,11 @@
-class RulesView {
-    populateRules(rules) { } // RulesUIModel object
+class RulesViewInterface {
+    populateRules(rules) { } // RulesUIModel
+    showError(error) { }
 }
 
 class RulesUIModel {
     dateTime;
-    lineRules; // list of LineRulesUIModel objects
+    lineRules; // list of LineRulesUIModels
 
     constructor(dateTime, lineRules) {
         this.dateTime = dateTime;
