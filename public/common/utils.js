@@ -34,50 +34,39 @@ function getBST_Input_Date(dateTime = new Date()) {
     return `${simpleFormattedDate}T${simpleFormattedTime}`.substring(0, 16);
 }
 
-function includeHTMLs(document) {
-    return new Promise((resolve, reject) => {
-        elements = document.getElementsByTagName("*");
-        filePromises = [];
+async function includeHTMLs(document) {
+    while(await new Promise(async (resolve, reject) => {
+        const elements = document.getElementsByTagName("*");
         for (i = 0; i < elements.length; i++) {
-            element = elements[i];
-            file = element.getAttribute("w3-include-html");
+            const element = elements[i];
+            const file = element.getAttribute("w3-include-html");
             if (file) {
-                filePromises.push(fetchFile(element, file));
-            }
-        }
-        if (filePromises.length > 0) {
-            Promise.all(filePromises)
-                .then(results => {
-                    promises = results.map(([element, html]) => {
-                        element.innerHTML = html;
-                        element.removeAttribute("w3-include-html");
-                        return includeHTMLs(element);
-                    });
-                    return Promise.all(promises)
-                        .then(resolve)
-                        .catch(reject)
-                })
-                .catch(([element, error]) => {
+                element.removeAttribute("w3-include-html");
+                try {
+                    element.innerHTML = await fetchFile(file);
+                    resolve(1);
+                    return;
+                } catch (error) {
                     element.innerHTML = "<p style='color: red;'>Content not found.</p>";
                     reject(error);
-                });
-        } else {
-            resolve()
+                }
+            }
         }
-    });
+        resolve(-1);
+    }) == 1);
 }
 
-function fetchFile(element, file) {
+function fetchFile(file) {
     return new Promise((resolve, reject) => {
-        xhr = new XMLHttpRequest();
+        const xhr = new XMLHttpRequest();
         xhr.open("GET", file, false);
         xhr.onreadystatechange = function () {
             if (this.readyState == 4) {
                 if (this.status == 200) {
-                    resolve([element, this.responseText]);
+                    resolve(this.responseText);
                 }
                 if (this.status == 404) {
-                    reject([element, new NetworkError(`Error fetching file: ${file}`)]);
+                    reject(new NetworkError(`Error fetching file: ${file}`));
                 }
             }
         }
@@ -86,4 +75,16 @@ function fetchFile(element, file) {
         };
         xhr.send();
     });
+}
+
+async function initView(document, viewModel) {
+    try {
+        await includeHTMLs(document);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            viewModel.onPageReady()
+        });
+    } catch (error) {
+        globalHandleUIError(error);
+    }
 }

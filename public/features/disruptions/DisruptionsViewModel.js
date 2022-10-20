@@ -2,8 +2,8 @@ class DisruptionViewModel extends ViewModel {
 
     repository = new DisruptionsRepository();
 
-    constructor(document, view) {
-        super(document, view);
+    constructor(view) {
+        super(view);
     }
 
     // Override
@@ -13,7 +13,6 @@ class DisruptionViewModel extends ViewModel {
             .then(this.view.displayMap)
             .then(this.repository.loadDisruptions)
             .then(this.view.displayDisruptions)
-
             .catch(this.view.showError);
     }
 }

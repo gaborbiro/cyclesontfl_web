@@ -1,7 +1,10 @@
 <div id="message">
     <h2>Where are cycles allowed on London public transport</h2>
 
-    <div w3-include-html="features/rules/rules_content_2.html"></div>
+    <div id="date-picker-container">
+        <input type="datetime-local" onchange="onDateSelected(this.value)" id="datetime_picker">
+        <button class="button button1" onclick="onResetClicked()">reset</button>
+    </div>
 
     <table id="rules">
 

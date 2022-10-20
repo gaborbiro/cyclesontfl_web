@@ -2,7 +2,7 @@ class RulesViewModel extends ViewModel {
 
     repository = new RulesRepository();
 
-    constructor(view) {
+    constructor(view) { // RulesView.js
         super(view);
     }
 
@@ -11,7 +11,6 @@ class RulesViewModel extends ViewModel {
         this
             .repository.getLineRules()
             .then(this.view.populateRules)
-
             .catch(this.view.showError);
     }
 
@@ -19,7 +18,6 @@ class RulesViewModel extends ViewModel {
         this
             .repository.getLineRules(dateTime)
             .then(this.view.populateRules)
-
             .catch(this.view.showError);
     }
 
@@ -27,7 +25,6 @@ class RulesViewModel extends ViewModel {
         this
             .repository.getLineRules()
             .then(this.view.populateRules)
-
             .catch(this.view.showError);
     }
 
