@@ -24,8 +24,9 @@
     <div w3-include-html="features/rules/rules_body.html"></div>
 </body>
 
-<script type="module">
-    await initView(document, new RulesViewModel(new RulesView()));
+<script>
+    const viewModel = new RulesViewModel(new RulesView());
+    initView(document, viewModel).then();
 
     function onDateSelected(rawDateTime) {
         const dateTime = new Date(`${rawDateTime}`);

@@ -15,6 +15,7 @@ class RulesViewModel extends ViewModel {
     }
 
     onNewDateTimeSelected = (dateTime) => {
+        safeLog("recalc");
         this
             .repository.getLineRules(dateTime)
             .then(this.view.populateRules)

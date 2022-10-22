@@ -43,8 +43,15 @@ svg {
 }
 
 #lines_container {
-    margin-left: 25px;
-    
+    background-color: whitesmoke;
+    padding-left: 25px;
+    padding-right: 25px;
+    padding-bottom: 12px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    -webkit-backface-visibility: hidden;
 }
 
 #lines_container_title {
@@ -65,4 +72,28 @@ svg {
     padding-top: 4px;
     padding-bottom: 4px;
     border-radius: 4px;
+}
+
+/* g[data-linestop] *:nth-child(2) {
+    fill: lightgray;
+}
+
+g[data-linestop] {
+    fill: lightgray;
+}
+
+.white-fill {
+} */
+
+.line:not(#dlr-dlr) * {
+    stroke: lightgray;
+}
+
+/* .blue-fill {
+    fill: lightgray;
+} */
+
+#cab-air-line * {
+    stroke: lightgray;
+    fill: lightgray;
 }
