@@ -1,5 +1,5 @@
 class RulesViewInterface {
-    populateRules(rules) { } // RulesUIModel
+    displayRules(rules) { } // RulesUIModel
     showError(error) { }
 }
 

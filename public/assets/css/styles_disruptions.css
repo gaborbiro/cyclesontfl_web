@@ -85,15 +85,15 @@ g[data-linestop] {
 .white-fill {
 } */
 
-.line:not(#dlr-dlr) * {
+/* .line:not(#dlr-dlr) * {
     stroke: lightgray;
-}
+} */
 
 /* .blue-fill {
     fill: lightgray;
 } */
 
-#cab-air-line * {
+/* #cab-air-line * {
     stroke: lightgray;
     fill: lightgray;
-}
+} */

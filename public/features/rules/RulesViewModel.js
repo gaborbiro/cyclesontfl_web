@@ -10,7 +10,7 @@ class RulesViewModel extends ViewModel {
     onPageReady() {
         this
             .repository.getLineRules()
-            .then(this.view.populateRules)
+            .then(this.view.displayRules)
             .catch(this.view.showError);
     }
 
@@ -18,14 +18,14 @@ class RulesViewModel extends ViewModel {
         safeLog("recalc");
         this
             .repository.getLineRules(dateTime)
-            .then(this.view.populateRules)
+            .then(this.view.displayRules)
             .catch(this.view.showError);
     }
 
     onResetClicked = () => {
         this
             .repository.getLineRules()
-            .then(this.view.populateRules)
+            .then(this.view.displayRules)
             .catch(this.view.showError);
     }
 

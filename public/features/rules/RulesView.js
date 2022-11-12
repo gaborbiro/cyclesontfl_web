@@ -1,7 +1,7 @@
 class RulesView extends RulesViewInterface {
 
     // Override
-    populateRules = (rules) => {
+    displayRules = (rules) => {
         var { dateTime, lineRules } = rules;
 
         const dateTimePicker = document.querySelector('#datetime_picker');

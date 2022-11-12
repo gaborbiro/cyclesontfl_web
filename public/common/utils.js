@@ -34,6 +34,9 @@ function getBST_Input_Date(dateTime = new Date()) {
     return `${simpleFormattedDate}T${simpleFormattedTime}`.substring(0, 16);
 }
 
+/**
+ * Executes all w3-include-html tags.
+ */
 async function includeHTMLs(document) {
     while(await new Promise(async (resolve, reject) => {
         const elements = document.getElementsByTagName("*");
