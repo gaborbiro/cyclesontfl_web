@@ -1,4 +1,5 @@
 const RuleFolded = "folded cycles";
+const RuleEBikes = "ebikes";
 const RuleBakerloo = Bakerloo;
 const RuleCentral = Central;
 const RuleCircle = Circle;
@@ -21,6 +22,7 @@ const RuleCoaches = "coaches"
 
 const RuleEntryInfo = new Map([
     [RuleFolded, { backgroundColor: "#FFFFFF", textColor: "#000000", name: "Folded cycles" }],
+    [RuleEBikes, { backgroundColor: "#FFFFFF", textColor: "#000000", name: "e-bikes" }],
     [RuleBakerloo, LineInfo.get(RuleBakerloo)],
     [RuleCentral, LineInfo.get(RuleCentral)],
     [RuleCircle, LineInfo.get(RuleCircle)],
@@ -43,6 +45,7 @@ const RuleEntryInfo = new Map([
 ]);
 
 const AllowedFolded = "You can take folded cycles anywhere, at any time on all transport services. However, on buses the driver can decide not to let you travel if it's too busy.";
+const EBikesNotAllowed = "Non-folding e-bikes are not allowed on most TfL services, including the Tube, Overground, Elizabeth line and DLR. This includes standard cycles that have been converted to e-bikes using a conversion kit.\n\nNon-folding e-bikes are allowed on:\n- The <a target='_blank' href='https://tfl.gov.uk/modes/river/woolwich-ferry'>Woolwich Ferry</a> and some river and coach services (check with the operator)\n- The <a target='_blank' href='https://tfl.gov.uk/modes/cycling/cycle-shuttle-service'>Silvertown Tunnel cycle shuttle service</a>";
 const AllowedAnywhere = "Allowed anywhere";
 const NotAllowed = "Not allowed";
 const NotAllowedEver = "Never allowed";

@@ -93,6 +93,7 @@ class RulesRepository {
 
 const allowedSet = new Map([
     [RuleFolded, { message: AllowedFolded, showHours: false, statusColor: "green" }],
+    [RuleEBikes, { message: EBikesNotAllowed, showHours: false, statusColor: "green" }],
     [RuleBakerloo, { message: AllowedBakerloo, showHours: true, statusColor: "orange" }],
     [RuleCentral, { message: AllowedCentral, showHours: true, statusColor: "orange" }],
     [RuleCircle, { message: AllowedAnywhere, showHours: true, statusColor: "green" }],
@@ -116,6 +117,7 @@ const allowedSet = new Map([
 
 const notAllowedSet = new Map([
     [RuleFolded, { message: AllowedFolded, showHours: false, statusColor: "green" }],
+    [RuleEBikes, { message: EBikesNotAllowed, showHours: false, statusColor: "green" }],
     [RuleBakerloo, { message: NotAllowed, showHours: true, statusColor: "red" }],
     [RuleCentral, { message: NotAllowed, showHours: true, statusColor: "red" }],
     [RuleCircle, { message: NotAllowed, showHours: true, statusColor: "red" }],
